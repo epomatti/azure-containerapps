@@ -1,15 +1,41 @@
 # azure-containerapps
 
-Azure Container Apps environment
+Serverless micro-services on Azure with Container Apps.
 
+As per Microsoft [documentation](https://learn.microsoft.com/en-us/azure/container-apps/connect-apps?tabs=bash) on networking for Container Apps:
 
+> When you call another container in the same environment using the FQDN, the network traffic never leaves the environment.
+
+## Deploy
+
+Simply run the following to start the environment:
+
+```sh
+cd infra
+
+touch .auto.tfvars
+
+terraform init
+terraform apply -auto-approve
+```
+
+## Local Development & Docker
+
+You can run each of the services independently by cd-ing into each one and using basic Node commands:
+
+```sh
+npm install
+npm start
+```
+
+For an integrated local development experience:
 
 ```sh
 docker-compose build
 docker-compose up
 ```
 
-Pushing images to DockerHub
+To publish container changes:
 
 ```sh
 docker build ./service1 -t epomatti/azure-containerapps-service1
@@ -21,14 +47,18 @@ docker push epomatti/azure-containerapps-service1
 docker push epomatti/azure-containerapps-service2
 ```
 
-As per Microsoft [documentation](https://learn.microsoft.com/en-us/azure/container-apps/connect-apps?tabs=bash) on networking for Container Apps:
+## Clean-up
 
-> When you call another container in the same environment using the FQDN, the network traffic never leaves the environment.
+```sh
+terraform destroy -auto-approve
+```
+
+
+## References
+
 
 - [Container Apps REST API - Container Apps](https://learn.microsoft.com/en-us/rest/api/containerapps/container-apps/create-or-update?tabs=HTTP)
 - [Container Apps REST API - Managed Environments](https://learn.microsoft.com/en-us/rest/api/containerapps/managed-environments/create-or-update?tabs=HTTP)
-
-https://techcommunity.microsoft.com/t5/fasttrack-for-azure/can-i-create-an-azure-container-apps-in-terraform-yes-you-can/ba-p/3570694
-
-https://www.thorsten-hans.com/deploy-azure-container-apps-with-terraform/
+- [Microsoft Tech Community Article - Terraform](https://techcommunity.microsoft.com/t5/fasttrack-for-azure/can-i-create-an-azure-container-apps-in-terraform-yes-you-can/ba-p/3570694)
+- [Terraform Article](https://www.thorsten-hans.com/deploy-azure-container-apps-with-terraform/)
 
