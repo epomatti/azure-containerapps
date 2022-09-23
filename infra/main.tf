@@ -62,8 +62,84 @@ resource "azapi_resource" "managed_environment" {
 
 }
 
+
+### Services ###
+
+# resource "azapi_resource" "container_app" {
+#   name      = "capps-service1"
+#   location  = azurerm_resource_group.default.location
+#   parent_id = azurerm_resource_group.default.id
+#   type      = "Microsoft.App/containerApps@2022-03-01"
+
+#   body = jsonencode({
+#     properties : {
+#       managedEnvironmentId = azapi_resource.managed_environment.id
+#       configuration = {
+#         ingress = {
+#           external   = true
+#           targetPort = 3000
+#         }
+#       }
+#       template = {
+#         containers = [
+#           {
+#             name  = "service1"
+#             image = "epomatti/azure-containerapps-service1"
+#             resources = {
+#               cpu    = 0.5
+#               memory = "1.0Gi"
+#             }
+#           }
+#         ]
+#         scale = {
+#           minReplicas = 1
+#           maxReplicas = 2
+#         }
+#       }
+#     }
+#   })
+# }
+
+# resource "azapi_resource" "container_app" {
+#   name      = "capps-service2"
+#   location  = azurerm_resource_group.default.location
+#   parent_id = azurerm_resource_group.default.id
+#   type      = "Microsoft.App/containerApps@2022-03-01"
+
+#   body = jsonencode({
+#     properties : {
+#       managedEnvironmentId = azapi_resource.managed_environment.id
+#       configuration = {
+#         ingress = {
+#           external   = true
+#           targetPort = 3100
+#         }
+#       }
+#       template = {
+#         containers = [
+#           {
+#             name  = "service2"
+#             image = "epomatti/azure-containerapps-service2"
+#             resources = {
+#               cpu    = 0.5
+#               memory = "1.0Gi"
+#             }
+#           }
+#         ]
+#         scale = {
+#           minReplicas = 1
+#           maxReplicas = 2
+#         }
+#       }
+#     }
+#   })
+# }
+
+
+### Nginx Container ###
+
 resource "azapi_resource" "container_app" {
-  name      = "apps-${local.project}"
+  name      = "capps-nginx"
   location  = azurerm_resource_group.default.location
   parent_id = azurerm_resource_group.default.id
   type      = "Microsoft.App/containerApps@2022-03-01"
@@ -80,7 +156,7 @@ resource "azapi_resource" "container_app" {
       template = {
         containers = [
           {
-            name  = "main"
+            name  = "nginx"
             image = "nginx"
             resources = {
               cpu    = 0.5
@@ -95,5 +171,4 @@ resource "azapi_resource" "container_app" {
       }
     }
   })
-
 }
