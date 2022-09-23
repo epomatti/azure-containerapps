@@ -59,6 +59,21 @@ resource "azurerm_subnet" "infrastructure" {
   address_prefixes     = ["10.90.0.0/16"]
 }
 
+### Service Bus ###
+
+resource "azurerm_servicebus_namespace" "default" {
+  name                = "bus-${local.project}"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  sku                 = "Basic"
+}
+
+resource "azurerm_servicebus_queue" "default" {
+  name                = "queue1"
+  namespace_id        = azurerm_servicebus_namespace.default.id
+  enable_partitioning = true
+}
+
 ### Log Analytics Workspace ###
 
 resource "azurerm_log_analytics_workspace" "default" {
@@ -76,7 +91,7 @@ resource "azurerm_application_insights" "default" {
   workspace_id        = azurerm_log_analytics_workspace.default.id
 }
 
-### Container Apps ###
+### Container Apps - Environment ###
 
 resource "azapi_resource" "managed_environment" {
   name      = "environment-${local.project}"
@@ -104,7 +119,41 @@ resource "azapi_resource" "managed_environment" {
 
 }
 
-### Services ###
+### Dapr ###
+
+resource "azapi_resource" "dapr_servicebus" {
+  name      = "service-bus"
+  parent_id = azapi_resource.managed_environment.id
+  type      = "Microsoft.App/managedEnvironments/daprComponents@2022-03-01"
+
+  // TODO: Implement Azure Authentication
+  body = jsonencode({
+    properties = {
+      componentType = "pubsub.azure.servicebus"
+      version       = "v1"
+      initTimeout   = 60
+      metadata = [
+        {
+          name      = "connectionString",
+          secretRef = "primaryConnectionString"
+        }
+      ]
+      secrets = [
+        {
+          name  = "primaryConnectionString",
+          value = azurerm_servicebus_namespace.default.default_primary_connection_string
+        }
+      ]
+      scopes = [
+        "publisher-app",
+        "subscriber-app"
+      ]
+    }
+  })
+}
+
+
+### Application Apps - Services ###
 
 resource "azapi_resource" "service1" {
   name      = "capps-service1"
@@ -121,6 +170,12 @@ resource "azapi_resource" "service1" {
         ingress = {
           external   = true
           targetPort = 3000
+        }
+        dapr = {
+          enabled     = true
+          appId       = "publisher-app"
+          appPort     = 6002
+          appProtocol = "http"
         }
       }
       template = {
@@ -178,6 +233,12 @@ resource "azapi_resource" "service2" {
         ingress = {
           external   = false
           targetPort = 3100
+        }
+        dapr = {
+          enabled     = true
+          appId       = "subscriber-app"
+          appPort     = 6002
+          appProtocol = "http"
         }
       }
       template = {
