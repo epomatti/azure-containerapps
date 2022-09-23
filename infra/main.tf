@@ -42,7 +42,7 @@ resource "azurerm_log_analytics_workspace" "default" {
 ### VNet ###
 
 resource "azurerm_network_security_group" "default" {
-  name                = "sg-microservices"
+  name                = "nsg-microservices"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
 }
@@ -51,21 +51,21 @@ resource "azurerm_virtual_network" "default" {
   name                = "vnet-microservices"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/8"]
 }
 
 resource "azurerm_subnet" "runtime" {
   name                 = "subnet-runtime"
   resource_group_name  = azurerm_resource_group.default.name
   virtual_network_name = azurerm_virtual_network.default.name
-  address_prefixes     = ["10.0.10.0/24"]
+  address_prefixes     = ["10.10.0.0/16"]
 }
 
 resource "azurerm_subnet" "infrastructure" {
   name                 = "subnet-infrastructure"
   resource_group_name  = azurerm_resource_group.default.name
   virtual_network_name = azurerm_virtual_network.default.name
-  address_prefixes     = ["10.0.90.0/24"]
+  address_prefixes     = ["10.90.0.0/16"]
 }
 
 ### Container Apps ###
