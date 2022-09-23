@@ -132,7 +132,7 @@ resource "azapi_resource" "service1" {
               {
                 type = "Liveness"
                 httpGet = {
-                  path = "/health"
+                  path = "/liveness"
                   port = 3000
                   httpHeaders = [
                     {
@@ -186,7 +186,7 @@ resource "azapi_resource" "service2" {
               {
                 type = "Liveness"
                 httpGet = {
-                  path = "/health"
+                  path = "/liveness"
                   port = 3100
                   httpHeaders = [
                     {
