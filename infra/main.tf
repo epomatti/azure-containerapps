@@ -128,6 +128,23 @@ resource "azapi_resource" "service1" {
             env = [
               { name = "SERVICE2_URL", value = "https://${jsondecode(azapi_resource.service2.output).properties.configuration.ingress.fqdn}" }
             ]
+            probes = [
+              {
+                type = "Liveness"
+                httpGet = {
+                  path = "/health"
+                  port = 3000
+                  httpHeaders = [
+                    {
+                      name  = "Custom-Header"
+                      value = "Awesome"
+                    }
+                  ]
+                }
+                initialDelaySeconds = 3
+                periodSeconds       = 3
+              }
+            ]
           }
         ]
         scale = {
@@ -165,6 +182,23 @@ resource "azapi_resource" "service2" {
               cpu    = 0.5
               memory = "1.0Gi"
             }
+            probes = [
+              {
+                type = "Liveness"
+                httpGet = {
+                  path = "/health"
+                  port = 3100
+                  httpHeaders = [
+                    {
+                      name  = "Custom-Header"
+                      value = "Awesome"
+                    }
+                  ]
+                }
+                initialDelaySeconds = 3
+                periodSeconds       = 3
+              }
+            ]
           }
         ]
         scale = {
