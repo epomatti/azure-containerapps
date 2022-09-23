@@ -23,14 +23,12 @@ locals {
   project = "microservices"
 }
 
-
 ### Group ###
 
 resource "azurerm_resource_group" "default" {
   name     = "rg-${local.project}"
   location = var.location
 }
-
 
 ### Log Analytics Workspace ###
 
@@ -41,8 +39,39 @@ resource "azurerm_log_analytics_workspace" "default" {
   sku                 = "PerGB2018"
 }
 
+### VNet ###
+
+resource "azurerm_network_security_group" "default" {
+  name                = "sg-microservices"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+}
+
+resource "azurerm_virtual_network" "default" {
+  name                = "vnet-microservices"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "runtime" {
+  name                 = "subnet-runtime"
+  resource_group_name  = azurerm_resource_group.default.name
+  virtual_network_name = azurerm_virtual_network.default.name
+  address_prefixes     = ["10.0.10.0/24"]
+}
+
+resource "azurerm_subnet" "infrastructure" {
+  name                 = "subnet-infrastructure"
+  resource_group_name  = azurerm_resource_group.default.name
+  virtual_network_name = azurerm_virtual_network.default.name
+  address_prefixes     = ["10.0.90.0/24"]
+}
+
+### Container Apps ###
+
 resource "azapi_resource" "managed_environment" {
-  name      = "${local.project}-managed-environment"
+  name      = "environment-${local.project}"
   location  = azurerm_resource_group.default.location
   parent_id = azurerm_resource_group.default.id
   type      = "Microsoft.App/managedEnvironments@2022-03-01"
@@ -56,6 +85,11 @@ resource "azapi_resource" "managed_environment" {
           customerId = azurerm_log_analytics_workspace.default.workspace_id
           sharedKey  = azurerm_log_analytics_workspace.default.primary_shared_key
         }
+      }
+      vnetConfiguration = {
+        internal               = false
+        runtimeSubnetId        = azurerm_subnet.runtime.id
+        infrastructureSubnetId = azurerm_subnet.infrastructure.id
       }
     }
   })
@@ -118,7 +152,7 @@ resource "azapi_resource" "service2" {
       managedEnvironmentId = azapi_resource.managed_environment.id
       configuration = {
         ingress = {
-          external   = true
+          external   = false
           targetPort = 3100
         }
       }
