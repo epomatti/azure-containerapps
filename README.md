@@ -4,10 +4,22 @@ Azure Container Apps environment
 
 
 
-docker build . -t service1
+```sh
+docker-compose build
+docker-compose up
+```
 
-docker build . -t service2
+Pushing images to DockerHub
 
+```sh
+docker build ./service1 -t epomatti/azure-containerapps-service1
+docker build ./service2 -t epomatti/azure-containerapps-service2
+
+docker login --username=<username>
+
+docker push epomatti/azure-containerapps-service1
+docker push epomatti/azure-containerapps-service2
+```
 
 
 
