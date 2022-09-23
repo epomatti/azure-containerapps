@@ -30,15 +30,6 @@ resource "azurerm_resource_group" "default" {
   location = var.location
 }
 
-### Log Analytics Workspace ###
-
-resource "azurerm_log_analytics_workspace" "default" {
-  name                = "log-${local.project}"
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
-  sku                 = "PerGB2018"
-}
-
 ### VNet ###
 
 resource "azurerm_network_security_group" "default" {
@@ -68,6 +59,23 @@ resource "azurerm_subnet" "infrastructure" {
   address_prefixes     = ["10.90.0.0/16"]
 }
 
+### Log Analytics Workspace ###
+
+resource "azurerm_log_analytics_workspace" "default" {
+  name                = "log-${local.project}"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  sku                 = "PerGB2018"
+}
+
+resource "azurerm_application_insights" "default" {
+  name                = "appi-services"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.default.id
+}
+
 ### Container Apps ###
 
 resource "azapi_resource" "managed_environment" {
@@ -78,7 +86,7 @@ resource "azapi_resource" "managed_environment" {
 
   body = jsonencode({
     properties = {
-      # daprAIInstrumentationKey = var.instrumentation_key
+      daprAIInstrumentationKey = azurerm_application_insights.default.instrumentation_key
       appLogsConfiguration = {
         destination = "log-analytics"
         logAnalyticsConfiguration = {
@@ -95,7 +103,6 @@ resource "azapi_resource" "managed_environment" {
   })
 
 }
-
 
 ### Services ###
 
