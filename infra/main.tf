@@ -62,23 +62,38 @@ resource "azapi_resource" "managed_environment" {
 
 }
 
-# resource "azapi_resource" "container_app" {
-#   for_each = { for app in var.container_apps : app.name => app }
+resource "azapi_resource" "container_app" {
+  name      = "apps-${local.project}"
+  location  = azurerm_resource_group.default.location
+  parent_id = azurerm_resource_group.default.id
+  type      = "Microsoft.App/containerApps@2022-03-01"
 
-#   name      = each.key
-#   location  = var.location
-#   parent_id = var.resource_group_id
-#   type      = "Microsoft.App/containerApps@2022-03-01"
+  body = jsonencode({
+    properties : {
+      managedEnvironmentId = azapi_resource.managed_environment.id
+      configuration = {
+        ingress = {
+          external   = true
+          targetPort = 80
+        }
+      }
+      template = {
+        containers = [
+          {
+            name  = "main"
+            image = "nginx"
+            resources = {
+              cpu    = 0.5
+              memory = "1.0Gi"
+            }
+          }
+        ]
+        scale = {
+          minReplicas = 1
+          maxReplicas = 2
+        }
+      }
+    }
+  })
 
-#   body = jsonencode({
-#     properties : {
-#       managedEnvironmentId = azapi_resource.managed_environment.id
-#       configuration = {
-#         ingress = try(each.value.configuration.ingress, null)
-#         dapr    = try(each.value.configuration.dapr, null)
-#       }
-#       template = each.value.template
-#     }
-#   })
-
-# }
+}
