@@ -15,6 +15,11 @@ app.get('/api/hello', (req, res) => {
   res.send(json)
 })
 
+app.post('/api/messages', (req, res) => {
+  console.log(`Message received by the application: ${req.body}`);
+  res.sendStatus(200);
+})
+
 app.get('/liveness', (req, res) => {
   res.sendStatus(200);
 })

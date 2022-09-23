@@ -18,6 +18,17 @@ touch .auto.tfvars
 terraform init
 terraform apply -auto-approve
 ```
+## Local Dapr
+
+```sh
+docker run -d -p 5672:5672 --name dtc-rabbitmq rabbitmq
+dapr run --app-id service2 --app-port 3100 --components-path ../myComponents
+```
+
+```sh
+dapr run --app-id service1 --dapr-http-port 3601
+dapr publish --publish-app-id service2 --pubsub messages-pub-sub --topic queue1 --data '{"orderId": "100"}'
+```
 
 ## Local Development & Docker
 

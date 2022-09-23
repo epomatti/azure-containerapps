@@ -122,7 +122,7 @@ resource "azapi_resource" "managed_environment" {
 ### Dapr ###
 
 resource "azapi_resource" "dapr_servicebus" {
-  name      = "service-bus"
+  name      = "messages-pub-sub"
   parent_id = azapi_resource.managed_environment.id
   type      = "Microsoft.App/managedEnvironments/daprComponents@2022-03-01"
 
@@ -174,7 +174,7 @@ resource "azapi_resource" "service1" {
         dapr = {
           enabled     = true
           appId       = "publisher-app"
-          appPort     = 6002
+          appPort     = 3500
           appProtocol = "http"
         }
       }
@@ -237,7 +237,7 @@ resource "azapi_resource" "service2" {
         dapr = {
           enabled     = true
           appId       = "subscriber-app"
-          appPort     = 6002
+          appPort     = 3501
           appProtocol = "http"
         }
       }
