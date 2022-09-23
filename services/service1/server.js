@@ -17,6 +17,10 @@ app.get('/api/foo', (req, res) => {
   });
 })
 
+app.get('/liveness', (req, res) => {
+  res.sendStatus(200);
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

@@ -15,6 +15,10 @@ app.get('/api/hello', (req, res) => {
   res.send(json)
 })
 
+app.get('/liveness', (req, res) => {
+  res.sendStatus(200);
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
