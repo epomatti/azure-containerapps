@@ -31,6 +31,8 @@ npm start
 For an integrated local development experience:
 
 ```sh
+cd services
+
 docker-compose build
 docker-compose up
 ```
@@ -38,6 +40,8 @@ docker-compose up
 To publish container changes:
 
 ```sh
+cd services
+
 docker build ./service1 -t epomatti/azure-containerapps-service1
 docker build ./service2 -t epomatti/azure-containerapps-service2
 
