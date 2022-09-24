@@ -35,13 +35,13 @@ resource "azurerm_resource_group" "default" {
 ### VNet ###
 
 resource "azurerm_network_security_group" "default" {
-  name                = "nsg-microservices"
+  name                = "nsg-${local.project}"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
 }
 
 resource "azurerm_virtual_network" "default" {
-  name                = "vnet-microservices"
+  name                = "vnet-${local.project}"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
   address_space       = ["10.0.0.0/8"]
@@ -86,7 +86,7 @@ resource "azurerm_log_analytics_workspace" "default" {
 }
 
 resource "azurerm_application_insights" "default" {
-  name                = "appi-services"
+  name                = "appi-${local.project}"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
   application_type    = "web"
@@ -96,7 +96,7 @@ resource "azurerm_application_insights" "default" {
 ### Container Apps - Environment ###
 
 resource "azapi_resource" "managed_environment" {
-  name      = "environment-${local.project}"
+  name      = "env-${local.project}"
   location  = azurerm_resource_group.default.location
   parent_id = azurerm_resource_group.default.id
   type      = "Microsoft.App/managedEnvironments@2022-03-01"
@@ -142,7 +142,10 @@ module "containerapp_publisher" {
 
   # Container
   container_image = "epomatti/azure-containerapps-publisher"
-  container_envs  = [{ name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn }]
+  container_envs = [
+    { name = "HTTPS_ENABLED", value = "true" },
+    { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn }
+  ]
 }
 
 module "containerapp_subscriber" {
@@ -164,6 +167,9 @@ module "containerapp_subscriber" {
 
   # Container
   container_image = "epomatti/azure-containerapps-subscriber"
+  container_envs = [
+    { name = "HTTPS_ENABLED", value = "true" }
+  ]
 }
 
 ### Nginx ###

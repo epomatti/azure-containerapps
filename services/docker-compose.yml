@@ -1,18 +1,21 @@
 version: "3.9"
 services:
 
-  service1:
+  publisher-app:
     build:
-      context: ./service1
+      context: ./publisher
     environment:
-      SERVICE2_URL: http://service2:3100
+      HTTPS_ENABLED: "true"
+      SUBSCRIBER_FQDN: "publisher:3000"
     depends_on:
-      - service2
+      - subscriber-app
     ports:
       - '3000:3000'
 
-  service2:
+  subscriber-app:
     build:
-      context: ./service2
+      context: ./subscriber
+    environment:
+      HTTPS_ENABLED: "true"
     ports:
       - '3100:3100'
