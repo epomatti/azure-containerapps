@@ -21,9 +21,10 @@ app.get('/api/foo', (req, res) => {
   });
 })
 
+const daprBaseUrl = `${protocol}://${process.env.SUBSCRIBER_DAPR_FQDN}`;
 app.get('/api/enqueue', (req, res) => {
   request({
-    url: `http://${process.env.SUBSCRIBER_DAPR_FQDN}/v1.0/publish/messages-pub-sub/queue1`,
+    url: `${daprBaseUrl}/v1.0/publish/messages-pub-sub/queue1`,
     method: 'POST',
     json: { mes: 'heydude' }
   }, function (error, response, body) {
