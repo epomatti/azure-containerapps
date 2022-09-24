@@ -1,6 +1,6 @@
 ### Container App ###
 
-variable "group" {
+variable "group_id" {
   type = string
 }
 

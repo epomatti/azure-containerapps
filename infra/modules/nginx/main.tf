@@ -11,7 +11,7 @@ variable "location" {
   type = string
 }
 
-variable "group" {
+variable "group_id" {
   type = string
 }
 
@@ -22,7 +22,7 @@ variable "environment" {
 resource "azapi_resource" "nginx" {
   name      = "app-nginx"
   location  = var.location
-  parent_id = var.group
+  parent_id = var.group_id
   type      = "Microsoft.App/containerApps@2022-03-01"
 
   response_export_values = ["properties.configuration.ingress.fqdn"]
@@ -57,5 +57,5 @@ resource "azapi_resource" "nginx" {
 }
 
 output "fqdn" {
-  value = jsondecode(azapi_resource.service1.output).properties.configuration.ingress.fqdn
+  value = jsondecode(azapi_resource.nginx.output).properties.configuration.ingress.fqdn
 }

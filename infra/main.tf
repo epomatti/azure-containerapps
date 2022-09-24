@@ -129,7 +129,7 @@ module "containerapp_publisher" {
   # Container App
   name        = "app-publisher"
   location    = var.location
-  group       = azurerm_resource_group.default.name
+  group_id    = azurerm_resource_group.default.id
   environment = azapi_resource.managed_environment.id
 
   # Ingress
@@ -154,7 +154,7 @@ module "containerapp_subscriber" {
   # Container App
   name        = "app-subscriber"
   location    = var.location
-  group       = azurerm_resource_group.default.name
+  group_id    = azurerm_resource_group.default.id
   environment = azapi_resource.managed_environment.id
 
   # Ingress
@@ -177,7 +177,7 @@ module "containerapp_subscriber" {
 module "nginx" {
   source      = "./modules/nginx"
   location    = var.location
-  group       = azurerm_resource_group.default.name
+  group_id    = azurerm_resource_group.default.id
   environment = azapi_resource.managed_environment.id
 }
 

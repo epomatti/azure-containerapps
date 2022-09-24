@@ -14,7 +14,7 @@ terraform {
 resource "azapi_resource" "container_app" {
   name      = var.name
   location  = var.location
-  parent_id = var.group
+  parent_id = var.group_id
   type      = "Microsoft.App/containerApps@2022-03-01"
 
   response_export_values = ["properties.configuration.ingress.fqdn"]
