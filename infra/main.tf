@@ -67,14 +67,17 @@ resource "azurerm_servicebus_namespace" "default" {
   name                = "bus-${local.project}"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
-  sku                 = "Basic"
+
+  # Standard is required for Dapr to use topics
+  sku = "Standard"
 }
 
-resource "azurerm_servicebus_queue" "default" {
+resource "azurerm_servicebus_topic" "default" {
   name                = "queue1"
   namespace_id        = azurerm_servicebus_namespace.default.id
   enable_partitioning = true
 }
+
 
 ### Log Analytics Workspace ###
 
@@ -145,7 +148,7 @@ module "containerapp_publisher" {
   container_envs = [
     { name = "HTTPS_ENABLED", value = "true" },
     { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn },
-    # { name = "SUBSCRIBER_DAPR_FQDN", value = module.containerapp_subscriber.fqdn }
+    { name = "SUBSCRIBER_DAPR_FQDN", value = module.containerapp_subscriber.fqdn }
   ]
 }
 

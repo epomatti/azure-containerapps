@@ -27,9 +27,13 @@ app.get('/api/enqueue', (req, res) => {
     method: 'POST',
     json: { mes: 'heydude' }
   }, function (error, response, body) {
-    if (error) { return console.log(error); }
+    if (error) {
+      console.error("An error occurred")
+      return console.error(error);
+    }
     const statusCode = response.statusCode;
     if (isOk(statusCode)) {
+      console.log(response.body)
       res.sendStatus(statusCode);
     } else {
       console.error(statusCode)
