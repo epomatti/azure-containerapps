@@ -88,6 +88,12 @@ docker push epomatti/azure-containerapps-publisher
 docker push epomatti/azure-containerapps-subscriber
 ```
 
+Testing in isolation:
+
+```sh
+docker container run --name containerapps-subscriber -p 3100:3100 -d --rm epomatti/azure-containerapps-subscriber
+```
+
 ## Clean-up
 
 ```sh

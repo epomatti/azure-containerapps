@@ -15,6 +15,16 @@ app.get('/api/hello', (req, res) => {
   res.send(json)
 })
 
+app.get('/dapr/subscribe', (_req, res) => {
+  res.json([
+    {
+      pubsubname: "messages-pub-sub",
+      topic: "queue1",
+      route: "api/messages"
+    }
+  ]);
+});
+
 app.post('/api/messages', (req, res) => {
   console.log(`Message received by the application: ${req.body}`);
   res.sendStatus(200);
