@@ -141,7 +141,7 @@ module "containerapp_publisher" {
   dapr_appPort = 3500
 
   # Container
-  container_image = "epomatti/azure-containerapps-service1"
+  container_image = "epomatti/azure-containerapps-publisher"
   container_envs  = [{ name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn }]
 }
 
@@ -163,7 +163,7 @@ module "containerapp_subscriber" {
   dapr_appPort = 3501
 
   # Container
-  container_image = "epomatti/azure-containerapps-service1"
+  container_image = "epomatti/azure-containerapps-subscriber"
 }
 
 ### Nginx ###
