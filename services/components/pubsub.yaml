@@ -19,5 +19,5 @@ spec:
     - name: concurrency
       value: parallel
 scopes:
-  - service1
-  - service2
+  - subscriber
+  - publisher

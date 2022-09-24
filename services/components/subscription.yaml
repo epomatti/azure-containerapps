@@ -7,5 +7,5 @@ spec:
   route: /api/messages
   pubsubname: messages-pub-sub
 scopes:
-  - service1
-  - service2
+  - subscriber
+  - publisher

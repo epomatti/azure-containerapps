@@ -21,16 +21,22 @@ app.get('/api/foo', (req, res) => {
   });
 })
 
-// app.get('/api/enqueue', (req, res) => {
-//   request({
-//     url: `${process.env.SERVICE2_URL}/v1.0/publish/messages-pub-sub/messages`,
-//     method: 'POST',
-//     json: { mes: 'heydude' }
-//   }, function (error, response, body) {
-//     console.log(body);
-//   });
-//   res.sendStatus(201);
-// })
+app.get('/api/enqueue', (req, res) => {
+  request({
+    url: `http://${process.env.SUBSCRIBER_DAPR_FQDN}/v1.0/publish/messages-pub-sub/messages`,
+    method: 'POST',
+    json: { mes: 'heydude' }
+  }, function (error, response, body) {
+    if (error) { return console.log(error); }
+    if (response.statusCode === 200) {
+      res.sendStatus(201);
+    } else {
+      console.error(response.statusCode)
+      console.error(response.body)
+      res.sendStatus(500);
+    }
+  });
+})
 
 app.get('/liveness', (req, res) => {
   res.sendStatus(200);
