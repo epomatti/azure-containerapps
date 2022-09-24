@@ -26,6 +26,9 @@ app.get('/api/enqueue', (req, res) => {
   request({
     url: `${daprBaseUrl}/v1.0/publish/messages-pub-sub/queue1`,
     method: 'POST',
+    headers: [
+      { "dapr-app-id": "publisher" }
+    ],
     json: { mes: 'heydude' }
   }, function (error, response, body) {
     if (error) {

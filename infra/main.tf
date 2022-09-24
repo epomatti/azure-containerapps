@@ -148,7 +148,7 @@ module "containerapp_publisher" {
   container_envs = [
     { name = "HTTPS_ENABLED", value = "true" },
     { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn },
-    { name = "SUBSCRIBER_DAPR_FQDN", value = module.containerapp_subscriber.fqdn }
+    { name = "SUBSCRIBER_DAPR_FQDN", value = "localhost:3500" }
   ]
 }
 

@@ -6,6 +6,8 @@ As per Microsoft [documentation](https://learn.microsoft.com/en-us/azure/contain
 
 > When you call another container in the same environment using the FQDN, the network traffic never leaves the environment.
 
+<img src=".docs/containerapps.png" />
+
 ## Deploy
 
 Register these providers if they have never been used:
@@ -25,6 +27,12 @@ touch .auto.tfvars
 terraform init
 terraform apply -auto-approve
 ```
+
+```sh
+curl -X POST -H "dapr-app-id: publisher" localhost:3500/v1.0/publish/messages-pub-sub/queue1
+```
+
+
 ## Self-Hosted Dapr
 
 Start the services:
@@ -110,6 +118,7 @@ terraform destroy -auto-approve
 
 ## References
 
+- [Container Apps Dapr ports](https://github.com/microsoft/azure-container-apps/issues/189)
 - [Container Apps REST API - Container Apps](https://learn.microsoft.com/en-us/rest/api/containerapps/container-apps/create-or-update?tabs=HTTP)
 - [Container Apps REST API - Managed Environments](https://learn.microsoft.com/en-us/rest/api/containerapps/managed-environments/create-or-update?tabs=HTTP)
 - [Dapr Service Bus](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-azure-servicebus/)
