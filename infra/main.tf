@@ -166,7 +166,6 @@ module "containerapp_subscriber" {
   container_image = "epomatti/azure-containerapps-service1"
 }
 
-
 ### Nginx ###
 
 module "nginx" {
@@ -175,7 +174,6 @@ module "nginx" {
   group       = azurerm_resource_group.default.name
   environment = azapi_resource.managed_environment.id
 }
-
 
 ### Outputs ###
 
