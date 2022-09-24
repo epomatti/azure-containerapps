@@ -37,7 +37,7 @@ docker run -d -p 5672:5672 --name dtc-rabbitmq rabbitmq
 cd subscriber
 npm start
 
-# Subscripber Dapr
+# Subscriber Dapr
 dapr run \
   --app-port 3100 \
   --app-id subscriber \
@@ -110,11 +110,10 @@ terraform destroy -auto-approve
 
 ## References
 
-
 - [Container Apps REST API - Container Apps](https://learn.microsoft.com/en-us/rest/api/containerapps/container-apps/create-or-update?tabs=HTTP)
 - [Container Apps REST API - Managed Environments](https://learn.microsoft.com/en-us/rest/api/containerapps/managed-environments/create-or-update?tabs=HTTP)
 - [Dapr Service Bus](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-azure-servicebus/)
 - [Dapr Pub/Sub](https://docs.dapr.io/developing-applications/building-blocks/pubsub/howto-publish-subscribe/)
+- [Microservices with Dapr using the CLI](https://learn.microsoft.com/en-us/azure/container-apps/microservices-dapr?tabs=bash)
 - [Microsoft Tech Community Article - Terraform](https://techcommunity.microsoft.com/t5/fasttrack-for-azure/can-i-create-an-azure-container-apps-in-terraform-yes-you-can/ba-p/3570694)
 - [Terraform Article](https://www.thorsten-hans.com/deploy-azure-container-apps-with-terraform/)
-

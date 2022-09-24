@@ -123,31 +123,31 @@ resource "azapi_resource" "managed_environment" {
 
 ### Application Apps - Services ###
 
-# module "containerapp_publisher" {
-#   source = "./modules/containerapp"
+module "containerapp_publisher" {
+  source = "./modules/containerapp"
 
-#   # Container App
-#   name        = "app-publisher"
-#   location    = var.location
-#   group_id    = azurerm_resource_group.default.id
-#   environment = azapi_resource.managed_environment.id
+  # Container App
+  name        = "app-publisher"
+  location    = var.location
+  group_id    = azurerm_resource_group.default.id
+  environment = azapi_resource.managed_environment.id
 
-#   # Ingress
-#   external            = true
-#   ingress_target_port = 3000
+  # Ingress
+  external            = true
+  ingress_target_port = 3000
 
-#   # Dapr
-#   dapr_appId   = "publisher"
-#   dapr_appPort = 30500
+  # Dapr
+  dapr_appId   = "publisher"
+  dapr_appPort = 3000
 
-#   # Container
-#   container_image = "epomatti/azure-containerapps-publisher"
-#   container_envs = [
-#     { name = "HTTPS_ENABLED", value = "true" },
-#     { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn },
-#     # { name = "SUBSCRIBER_DAPR_FQDN", value = module.containerapp_subscriber.fqdn }
-#   ]
-# }
+  # Container
+  container_image = "epomatti/azure-containerapps-publisher"
+  container_envs = [
+    { name = "HTTPS_ENABLED", value = "true" },
+    { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn },
+    # { name = "SUBSCRIBER_DAPR_FQDN", value = module.containerapp_subscriber.fqdn }
+  ]
+}
 
 module "containerapp_subscriber" {
   source = "./modules/containerapp"
@@ -159,12 +159,12 @@ module "containerapp_subscriber" {
   environment = azapi_resource.managed_environment.id
 
   # Ingress
-  external            = true
+  external            = false
   ingress_target_port = 3100
 
   # Dapr
   dapr_appId   = "subscriber"
-  dapr_appPort = 30501
+  dapr_appPort = 3100
 
   # Container
   container_image = "epomatti/azure-containerapps-subscriber"
@@ -191,9 +191,9 @@ module "nginx" {
 
 ### Outputs ###
 
-# output "publisher_url" {
-#   value = "https://${module.containerapp_publisher.fqdn}"
-# }
+output "publisher_url" {
+  value = "https://${module.containerapp_publisher.fqdn}"
+}
 
 output "subscriber_url" {
   value = "https://${module.containerapp_subscriber.fqdn}"
