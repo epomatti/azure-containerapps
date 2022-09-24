@@ -8,6 +8,13 @@ As per Microsoft [documentation](https://learn.microsoft.com/en-us/azure/contain
 
 ## Deploy
 
+Register these providers if they have never been used:
+
+```sh
+az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.OperationalInsights
+```
+
 Simply run the following to start the environment:
 
 ```sh
