@@ -18,7 +18,7 @@ touch .auto.tfvars
 terraform init
 terraform apply -auto-approve
 ```
-## Local Dapr
+## Self-Hosted Dapr
 
 Start the services:
 
@@ -53,7 +53,7 @@ npm start
 To test it, send a message to the queue:
 
 ```sh
-dapr publish --publish-app-id publisher --pubsub messages-pub-sub --topic queue1 --data 'awsome'
+http://localhost:3000/api/enqueue
 ```
 
 ## Local Development & Docker
