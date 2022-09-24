@@ -1,10 +1,12 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
+      version = "3.24.0"
     }
     azapi = {
-      source = "Azure/azapi"
+      source  = "Azure/azapi"
+      version = "0.6.0"
     }
   }
 }
@@ -119,215 +121,72 @@ resource "azapi_resource" "managed_environment" {
 
 }
 
-### Dapr ###
-
-resource "azapi_resource" "dapr_servicebus" {
-  name      = "messages-pub-sub"
-  parent_id = azapi_resource.managed_environment.id
-  type      = "Microsoft.App/managedEnvironments/daprComponents@2022-03-01"
-
-  // TODO: Implement Azure Authentication
-  body = jsonencode({
-    properties = {
-      componentType = "pubsub.azure.servicebus"
-      version       = "v1"
-      initTimeout   = 60
-      metadata = [
-        {
-          name      = "connectionString",
-          secretRef = "primaryConnectionString"
-        }
-      ]
-      secrets = [
-        {
-          name  = "primaryConnectionString",
-          value = azurerm_servicebus_namespace.default.default_primary_connection_string
-        }
-      ]
-      scopes = [
-        "publisher-app",
-        "subscriber-app"
-      ]
-    }
-  })
-}
-
-
 ### Application Apps - Services ###
 
-resource "azapi_resource" "service1" {
-  name      = "capps-service1"
-  location  = azurerm_resource_group.default.location
-  parent_id = azurerm_resource_group.default.id
-  type      = "Microsoft.App/containerApps@2022-03-01"
+module "containerapp_publisher" {
+  source = "./modules/containerapp"
 
-  response_export_values = ["properties.configuration.ingress.fqdn"]
+  # Container App
+  name        = "app-publisher"
+  location    = var.location
+  group       = azurerm_resource_group.default.name
+  environment = azapi_resource.managed_environment.id
 
-  body = jsonencode({
-    properties : {
-      managedEnvironmentId = azapi_resource.managed_environment.id
-      configuration = {
-        ingress = {
-          external   = true
-          targetPort = 3000
-        }
-        dapr = {
-          enabled     = true
-          appId       = "publisher-app"
-          appPort     = 3500
-          appProtocol = "http"
-        }
-      }
-      template = {
-        containers = [
-          {
-            name  = "service1"
-            image = "epomatti/azure-containerapps-service1"
-            resources = {
-              cpu    = 0.5
-              memory = "1.0Gi"
-            }
-            env = [
-              { name = "SERVICE2_URL", value = "https://${jsondecode(azapi_resource.service2.output).properties.configuration.ingress.fqdn}" }
-            ]
-            probes = [
-              {
-                type = "Liveness"
-                httpGet = {
-                  path = "/liveness"
-                  port = 3000
-                  httpHeaders = [
-                    {
-                      name  = "Custom-Header"
-                      value = "Awesome"
-                    }
-                  ]
-                }
-                initialDelaySeconds = 3
-                periodSeconds       = 3
-              }
-            ]
-          }
-        ]
-        scale = {
-          minReplicas = 1
-          maxReplicas = 2
-        }
-      }
-    }
-  })
+  # Ingress
+  external            = true
+  ingress_target_port = 3000
+
+  # Dapr
+  dapr_appId   = "publisher-app"
+  dapr_appPort = 3500
+
+  # Container
+  container_image = "epomatti/azure-containerapps-service1"
+  container_envs  = [{ name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn }]
 }
 
-resource "azapi_resource" "service2" {
-  name      = "capps-service2"
-  location  = azurerm_resource_group.default.location
-  parent_id = azurerm_resource_group.default.id
-  type      = "Microsoft.App/containerApps@2022-03-01"
+module "containerapp_subscriber" {
+  source = "./modules/containerapp"
 
-  response_export_values = ["properties.configuration.ingress.fqdn"]
+  # Container App
+  name        = "app-subscriber"
+  location    = var.location
+  group       = azurerm_resource_group.default.name
+  environment = azapi_resource.managed_environment.id
 
-  body = jsonencode({
-    properties : {
-      managedEnvironmentId = azapi_resource.managed_environment.id
-      configuration = {
-        ingress = {
-          external   = false
-          targetPort = 3100
-        }
-        dapr = {
-          enabled     = true
-          appId       = "subscriber-app"
-          appPort     = 3501
-          appProtocol = "http"
-        }
-      }
-      template = {
-        containers = [
-          {
-            name  = "service2"
-            image = "epomatti/azure-containerapps-service2"
-            resources = {
-              cpu    = 0.5
-              memory = "1.0Gi"
-            }
-            probes = [
-              {
-                type = "Liveness"
-                httpGet = {
-                  path = "/liveness"
-                  port = 3100
-                  httpHeaders = [
-                    {
-                      name  = "Custom-Header"
-                      value = "Awesome"
-                    }
-                  ]
-                }
-                initialDelaySeconds = 3
-                periodSeconds       = 3
-              }
-            ]
-          }
-        ]
-        scale = {
-          minReplicas = 1
-          maxReplicas = 2
-        }
-      }
-    }
-  })
+  # Ingress
+  external            = false
+  ingress_target_port = 3100
+
+  # Dapr
+  dapr_appId   = "subscriber-app"
+  dapr_appPort = 3501
+
+  # Container
+  container_image = "epomatti/azure-containerapps-service1"
 }
 
 
-### Nginx Container ###
+### Nginx ###
 
-resource "azapi_resource" "nginx" {
-  name      = "capps-nginx"
-  location  = azurerm_resource_group.default.location
-  parent_id = azurerm_resource_group.default.id
-  type      = "Microsoft.App/containerApps@2022-03-01"
-
-  response_export_values = ["properties.configuration.ingress.fqdn"]
-
-  body = jsonencode({
-    properties : {
-      managedEnvironmentId = azapi_resource.managed_environment.id
-      configuration = {
-        ingress = {
-          external   = true
-          targetPort = 80
-        }
-      }
-      template = {
-        containers = [
-          {
-            name  = "nginx"
-            image = "nginx"
-            resources = {
-              cpu    = 0.5
-              memory = "1.0Gi"
-            }
-          }
-        ]
-        scale = {
-          minReplicas = 1
-          maxReplicas = 2
-        }
-      }
-    }
-  })
+module "nginx" {
+  source      = "./modules/nginx"
+  location    = var.location
+  group       = azurerm_resource_group.default.name
+  environment = azapi_resource.managed_environment.id
 }
+
 
 ### Outputs ###
 
-output "service1_fqdn" {
-  value = "https://${jsondecode(azapi_resource.service1.output).properties.configuration.ingress.fqdn}"
+output "publisher_url" {
+  value = "https://${module.containerapp_publisher.fqdn}"
 }
 
-output "service2_fqdn" {
-  value = "https://${jsondecode(azapi_resource.service2.output).properties.configuration.ingress.fqdn}"
+output "subscriber_url" {
+  value = "https://${module.containerapp_subscriber.fqdn}"
 }
 
-output "nginx_fqdn" {
-  value = "https://${jsondecode(azapi_resource.nginx.output).properties.configuration.ingress.fqdn}"
+output "nginx_url" {
+  value = "https://${module.nginx.fqdn}"
 }
