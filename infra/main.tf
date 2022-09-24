@@ -137,14 +137,15 @@ module "containerapp_publisher" {
   ingress_target_port = 3000
 
   # Dapr
-  dapr_appId   = "publisher-app"
-  dapr_appPort = 3500
+  dapr_appId   = "publisher"
+  dapr_appPort = 30500
 
   # Container
   container_image = "epomatti/azure-containerapps-publisher"
   container_envs = [
     { name = "HTTPS_ENABLED", value = "true" },
-    { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn }
+    { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn },
+    # { name = "SUBSCRIBER_DAPR_FQDN", value = module.containerapp_subscriber.fqdn }
   ]
 }
 
@@ -162,14 +163,21 @@ module "containerapp_subscriber" {
   ingress_target_port = 3100
 
   # Dapr
-  dapr_appId   = "subscriber-app"
-  dapr_appPort = 3501
+  dapr_appId   = "subscriber"
+  dapr_appPort = 30501
 
   # Container
   container_image = "epomatti/azure-containerapps-subscriber"
   container_envs = [
     { name = "HTTPS_ENABLED", value = "true" }
   ]
+}
+
+### Dapr ###
+module "dapr_pubsub" {
+  source                       = "./modules/dapr-pubsub"
+  environment                  = azapi_resource.managed_environment.id
+  servicebus_connection_string = azurerm_servicebus_namespace.default.default_primary_connection_string
 }
 
 ### Nginx ###
