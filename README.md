@@ -1,6 +1,6 @@
-# azure-containerapps
+# Azure Container Apps
 
-Serverless micro-services on Azure with Container Apps.
+Serverless micro-services on Azure with Container Apps with Dapr integration.
 
 As per Microsoft [documentation](https://learn.microsoft.com/en-us/azure/container-apps/connect-apps?tabs=bash) on networking for Container Apps:
 
@@ -27,6 +27,14 @@ touch .auto.tfvars
 terraform init
 terraform apply -auto-approve
 ```
+
+Testing from external:
+
+```sh
+curl "https://<containerapp-fqdn>/api/enqueue"
+```
+
+Or testing from within the container directly to the sidecar:
 
 ```sh
 curl -X POST -H "dapr-app-id: publisher" localhost:3500/v1.0/publish/messages-pub-sub/queue1
