@@ -53,13 +53,13 @@ To publish container changes:
 ```sh
 cd services
 
-docker build ./service1 -t epomatti/azure-containerapps-service1
-docker build ./service2 -t epomatti/azure-containerapps-service2
+docker build ./publisher -t epomatti/azure-containerapps-publisher
+docker build ./subscriber -t epomatti/azure-containerapps-subscriber
 
 docker login --username=<username>
 
-docker push epomatti/azure-containerapps-service1
-docker push epomatti/azure-containerapps-service2
+docker push epomatti/azure-containerapps-publisher
+docker push epomatti/azure-containerapps-subscriber
 ```
 
 ## Clean-up
