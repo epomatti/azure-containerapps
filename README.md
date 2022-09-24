@@ -31,10 +31,19 @@ cd subscriber
 npm start
 
 # Subscripber Dapr
-dapr run --app-id subscriber --app-port 3100 --components-path ./components
+dapr run \
+  --app-port 3100 \
+  --app-id subscriber \
+  --app-protocol http \
+  --dapr-http-port 3501 \
+  --components-path ./components
 
 # Publisher Dapr
-dapr run --app-id publisher --dapr-http-port 3601
+dapr run \
+  --app-id publisher \
+  --app-protocol http \
+  --dapr-http-port 3500 \
+  --components-path ./components
 
 # Publisher Web Server
 cd publisher

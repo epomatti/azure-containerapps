@@ -23,15 +23,16 @@ app.get('/api/foo', (req, res) => {
 
 app.get('/api/enqueue', (req, res) => {
   request({
-    url: `http://${process.env.SUBSCRIBER_DAPR_FQDN}/v1.0/publish/messages-pub-sub/messages`,
+    url: `http://${process.env.SUBSCRIBER_DAPR_FQDN}/v1.0/publish/messages-pub-sub/queue1`,
     method: 'POST',
     json: { mes: 'heydude' }
   }, function (error, response, body) {
     if (error) { return console.log(error); }
-    if (response.statusCode === 200) {
-      res.sendStatus(201);
+    const statusCode = response.statusCode;
+    if (isOk(statusCode)) {
+      res.sendStatus(statusCode);
     } else {
-      console.error(response.statusCode)
+      console.error(statusCode)
       console.error(response.body)
       res.sendStatus(500);
     }
@@ -45,3 +46,7 @@ app.get('/liveness', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+const isOk = (statusCode) => {
+  return statusCode >= 200 || statusCode < 300;
+}
