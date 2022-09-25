@@ -73,7 +73,7 @@ resource "azurerm_servicebus_namespace" "default" {
 }
 
 resource "azurerm_servicebus_topic" "default" {
-  name                = "queue1"
+  name                = "orders"
   namespace_id        = azurerm_servicebus_namespace.default.id
   enable_partitioning = true
 }
@@ -126,11 +126,11 @@ resource "azapi_resource" "managed_environment" {
 
 ### Application Apps - Services ###
 
-module "containerapp_publisher" {
+module "containerapp_order" {
   source = "./modules/containerapp"
 
   # Container App
-  name        = "app-publisher"
+  name        = "app-order"
   location    = var.location
   group_id    = azurerm_resource_group.default.id
   environment = azapi_resource.managed_environment.id
@@ -140,23 +140,22 @@ module "containerapp_publisher" {
   ingress_target_port = 3000
 
   # Dapr
-  dapr_appId   = "publisher"
+  dapr_appId   = "order"
   dapr_appPort = 3000
 
   # Container
-  container_image = "epomatti/azure-containerapps-publisher"
+  container_image = "epomatti/azure-containerapps-order"
   container_envs = [
-    { name = "HTTPS_ENABLED", value = "true" },
-    { name = "SUBSCRIBER_FQDN", value = module.containerapp_subscriber.fqdn },
-    { name = "SUBSCRIBER_DAPR_FQDN", value = "localhost:3500" }
+    { name = "DAPR_APP_PORT", value = "3000" },
+    { name = "DAPR_HTTP_PORT", value = "3500" }
   ]
 }
 
-module "containerapp_subscriber" {
+module "containerapp_delivery" {
   source = "./modules/containerapp"
 
   # Container App
-  name        = "app-subscriber"
+  name        = "app-delivery"
   location    = var.location
   group_id    = azurerm_resource_group.default.id
   environment = azapi_resource.managed_environment.id
@@ -166,13 +165,14 @@ module "containerapp_subscriber" {
   ingress_target_port = 3100
 
   # Dapr
-  dapr_appId   = "subscriber"
+  dapr_appId   = "delivery"
   dapr_appPort = 3100
 
   # Container
-  container_image = "epomatti/azure-containerapps-subscriber"
+  container_image = "epomatti/azure-containerapps-delivery"
   container_envs = [
-    { name = "HTTPS_ENABLED", value = "true" }
+    { name = "DAPR_APP_PORT", value = "3100" },
+    { name = "DAPR_HTTP_PORT", value = "3500" }
   ]
 }
 
@@ -194,12 +194,8 @@ module "nginx" {
 
 ### Outputs ###
 
-output "publisher_url" {
-  value = "https://${module.containerapp_publisher.fqdn}"
-}
-
-output "subscriber_url" {
-  value = "https://${module.containerapp_subscriber.fqdn}"
+output "order_url" {
+  value = "https://${module.containerapp_order.fqdn}"
 }
 
 output "nginx_url" {

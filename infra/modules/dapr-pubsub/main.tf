@@ -17,7 +17,7 @@ variable "servicebus_connection_string" {
 }
 
 resource "azapi_resource" "dapr_servicebus" {
-  name      = "messages-pub-sub"
+  name      = "order-pub-sub"
   parent_id = var.environment
   type      = "Microsoft.App/managedEnvironments/daprComponents@2022-03-01"
 
@@ -40,8 +40,8 @@ resource "azapi_resource" "dapr_servicebus" {
         }
       ]
       scopes = [
-        "publisher",
-        "subscriber"
+        "order",
+        "delivery"
       ]
     }
   })

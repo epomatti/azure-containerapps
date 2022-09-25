@@ -31,7 +31,7 @@ terraform apply -auto-approve
 Testing from external:
 
 ```sh
-curl "https://<containerapp-fqdn>/api/enqueue"
+curl "https://<containerapp-fqdn>/liveness"
 ```
 
 Or testing from within the container directly to the sidecar:
@@ -49,28 +49,27 @@ Start the services:
 # Start RabbitMQ
 docker run -d -p 5672:5672 --name dtc-rabbitmq rabbitmq
 
-# Subscriber web server
-cd subscriber
-npm start
+cd delivery
 
-# Subscriber Dapr
+# Delivery
 dapr run \
+  --app-id delivery \
   --app-port 3100 \
-  --app-id subscriber \
   --app-protocol http \
   --dapr-http-port 3501 \
-  --components-path ./components
+  --components-path ../components \
+  npm run dev
 
-# Publisher Dapr
+cd orders
+
+# Orders Dapr
 dapr run \
-  --app-id publisher \
+  --app-id order \
+  --app-port 3000 \
   --app-protocol http \
   --dapr-http-port 3500 \
-  --components-path ./components
-
-# Publisher Web Server
-cd publisher
-npm start
+  --components-path ../components \
+  npm run dev
 ```
 
 To test it, send a message to the queue:
@@ -78,6 +77,8 @@ To test it, send a message to the queue:
 ```sh
 http://localhost:3000/api/enqueue
 ```
+
+dapr publish --publish-app-id order --pubsub order-pub-sub --topic orders --data '{"orderId": "100"}'
 
 ## Local Development & Docker
 
@@ -102,19 +103,13 @@ To publish container changes:
 ```sh
 cd services
 
-docker build ./publisher -t epomatti/azure-containerapps-publisher
-docker build ./subscriber -t epomatti/azure-containerapps-subscriber
+docker build ./order -t epomatti/azure-containerapps-order
+docker build ./delivery -t epomatti/azure-containerapps-delivery
 
 docker login --username=<username>
 
-docker push epomatti/azure-containerapps-publisher
-docker push epomatti/azure-containerapps-subscriber
-```
-
-Testing in isolation:
-
-```sh
-docker container run --name containerapps-subscriber -p 3100:3100 -d --rm epomatti/azure-containerapps-subscriber
+docker push epomatti/azure-containerapps-order
+docker push epomatti/azure-containerapps-delivery
 ```
 
 ## Clean-up
@@ -122,7 +117,6 @@ docker container run --name containerapps-subscriber -p 3100:3100 -d --rm epomat
 ```sh
 terraform destroy -auto-approve
 ```
-
 
 ## References
 

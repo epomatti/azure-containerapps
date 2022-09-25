@@ -2,7 +2,8 @@
 # Manual edits may be lost in future updates.
 
 provider "registry.terraform.io/azure/azapi" {
-  version = "0.6.0"
+  version     = "0.6.0"
+  constraints = "0.6.0"
   hashes = [
     "h1:pd0DxlutAr/424pJ+iJq6Vm/RzCx3UUendzwy/UzWP4=",
     "zh:1ffd75395464f242ea263fd233afd2a0f0982fd9ffc6e6d5e1d418992ca1ff91",
