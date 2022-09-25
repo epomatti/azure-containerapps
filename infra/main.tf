@@ -145,6 +145,10 @@ module "containerapp_order" {
 
   # Container
   container_image = "epomatti/azure-containerapps-order"
+  container_envs = [
+    { name = "DAPR_APP_PORT", value = "3000" },
+    { name = "DAPR_HTTP_PORT", value = "3500" }
+  ]
 }
 
 module "containerapp_delivery" {
@@ -166,6 +170,10 @@ module "containerapp_delivery" {
 
   # Container
   container_image = "epomatti/azure-containerapps-delivery"
+  container_envs = [
+    { name = "DAPR_APP_PORT", value = "3100" },
+    { name = "DAPR_HTTP_PORT", value = "3500" }
+  ]
 }
 
 ### Dapr ###
