@@ -144,3 +144,4 @@ terraform destroy -auto-approve
 - [Microservices with Dapr using the CLI](https://learn.microsoft.com/en-us/azure/container-apps/microservices-dapr?tabs=bash)
 - [Microsoft Tech Community Article - Terraform](https://techcommunity.microsoft.com/t5/fasttrack-for-azure/can-i-create-an-azure-container-apps-in-terraform-yes-you-can/ba-p/3570694)
 - [Terraform Article](https://www.thorsten-hans.com/deploy-azure-container-apps-with-terraform/)
+- [Application Insights SDK for Node.js](https://dev.to/kenakamu/application-insights-sdk-for-node-js-part-2-2el)
