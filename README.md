@@ -118,7 +118,6 @@ docker push epomatti/azure-containerapps-delivery
 terraform destroy -auto-approve
 ```
 
-
 ## References
 
 - [Container Apps Dapr ports](https://github.com/microsoft/azure-container-apps/issues/189)
