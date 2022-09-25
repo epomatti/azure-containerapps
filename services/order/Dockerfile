@@ -1,7 +1,8 @@
 FROM node:16
 
 # update packages
-RUN apk update
+RUN apt update
+RUN apt upgrade -y
 
 # create root application folder
 WORKDIR /app
