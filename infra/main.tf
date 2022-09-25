@@ -147,7 +147,8 @@ module "containerapp_order" {
   container_image = "epomatti/azure-containerapps-order"
   container_envs = [
     { name = "DAPR_APP_PORT", value = "3000" },
-    { name = "DAPR_HTTP_PORT", value = "3500" }
+    { name = "DAPR_HTTP_PORT", value = "3500" },
+    { name = "APPLICATIONINSIGHTS_CONNECTION_STRING", value = azurerm_application_insights.default.instrumentation_key }
   ]
 }
 
@@ -172,7 +173,8 @@ module "containerapp_delivery" {
   container_image = "epomatti/azure-containerapps-delivery"
   container_envs = [
     { name = "DAPR_APP_PORT", value = "3100" },
-    { name = "DAPR_HTTP_PORT", value = "3500" }
+    { name = "DAPR_HTTP_PORT", value = "3500" },
+    { name = "APPLICATIONINSIGHTS_CONNECTION_STRING", value = azurerm_application_insights.default.instrumentation_key }
   ]
 }
 
