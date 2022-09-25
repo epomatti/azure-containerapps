@@ -28,6 +28,11 @@ export const start = async () => {
     res.status(200).send({ status: "SUCCESS" });
   });
 
+  app.get('/api/deliveries', (req, res) => {
+    const delivery = { status: "DELIVERED" }
+    res.status(200).send(delivery);
+  });
+
   app.get('/liveness', (req, res) => {
     res.sendStatus(200);
   });

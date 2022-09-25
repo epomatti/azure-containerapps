@@ -1,7 +1,7 @@
 import express, { Response, Request } from 'express';
 import cors from 'cors';
 import { config } from './config'
-import { publishOrder } from './dapr'
+import { publishOrder, getDelivery } from './dapr'
 
 const app = express();
 app.use(express.json());
@@ -13,6 +13,11 @@ export const start = async () => {
     const { orderId } = req.body;
     await publishOrder(orderId);
     res.sendStatus(201);
+  });
+
+  app.get('/api/orders', async (req, res) => {
+    const delivery = await getDelivery();
+    res.status(200).send(delivery);
   });
 
   app.get('/liveness', (req, res) => {

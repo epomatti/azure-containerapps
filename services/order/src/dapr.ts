@@ -1,4 +1,4 @@
-import { DaprClient, CommunicationProtocolEnum } from '@dapr/dapr';
+import { DaprClient, HttpMethod, CommunicationProtocolEnum } from '@dapr/dapr';
 import { config } from './config';
 
 const { DAPR_HTTP_PORT } = config;
@@ -15,4 +15,9 @@ export const publishOrder = async (orderId: string) => {
   }
   // { "dapr-app-id": "publisher" }
   await client.pubsub.publish(PUBSUB_NAME, TOPIC_NAME, data);
+}
+
+export const getDelivery = async () => {
+  const client = new DaprClient(daprHost, DAPR_HTTP_PORT, CommunicationProtocolEnum.HTTP);
+  return await client.invoker.invoke('delivery', "api/deliveries", HttpMethod.GET);
 }
