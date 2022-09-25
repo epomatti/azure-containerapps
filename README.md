@@ -63,7 +63,7 @@ dapr run \
 
 # Publisher Dapr
 dapr run \
-  --app-id publisher \
+  --app-id orders \
   --app-protocol http \
   --dapr-http-port 3500 \
   --components-path ./components
