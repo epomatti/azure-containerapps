@@ -43,6 +43,15 @@ curl -d '{"orderId":"ORD-00001"}' -H "Content-Type: application/json" -X POST "<
 
 ## Self-Hosted Dapr
 
+Create 
+
+```sh
+az group create -n "rg-containerapps-dev" -l "eastus"
+az monitor log-analytics workspace create -g "rg-containerapps-dev" -n "log-containerapps-dev" -l "eastus"
+az monitor app-insights component create --app "appi-containerapps-dev" -g "rg-containerapps-dev" --workspace "log-containerapps-dev" -l "eastus"
+az monitor app-insights component show --app "appi-containerapps-dev" -g "rg-containerapps-dev" --query "connectionString" -o tsv
+```
+
 Start the services:
 
 ```sh
