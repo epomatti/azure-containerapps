@@ -32,33 +32,13 @@ resource "azurerm_resource_group" "default" {
   location = var.location
 }
 
-### VNet ###
+### Netowrk ###
 
-resource "azurerm_network_security_group" "default" {
-  name                = "nsg-${local.project}"
-  location            = azurerm_resource_group.default.location
+module "network" {
+  source              = "./modules/network"
+  project             = local.project
+  location            = var.location
   resource_group_name = azurerm_resource_group.default.name
-}
-
-resource "azurerm_virtual_network" "default" {
-  name                = "vnet-${local.project}"
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
-  address_space       = ["10.0.0.0/8"]
-}
-
-resource "azurerm_subnet" "runtime" {
-  name                 = "subnet-runtime"
-  resource_group_name  = azurerm_resource_group.default.name
-  virtual_network_name = azurerm_virtual_network.default.name
-  address_prefixes     = ["10.10.0.0/16"]
-}
-
-resource "azurerm_subnet" "infrastructure" {
-  name                 = "subnet-infrastructure"
-  resource_group_name  = azurerm_resource_group.default.name
-  virtual_network_name = azurerm_virtual_network.default.name
-  address_prefixes     = ["10.90.0.0/16"]
 }
 
 ### Service Bus ###
@@ -77,7 +57,6 @@ resource "azurerm_servicebus_topic" "default" {
   namespace_id        = azurerm_servicebus_namespace.default.id
   enable_partitioning = true
 }
-
 
 ### Log Analytics Workspace ###
 
@@ -116,11 +95,15 @@ resource "azapi_resource" "managed_environment" {
       }
       vnetConfiguration = {
         internal               = false
-        runtimeSubnetId        = azurerm_subnet.runtime.id
-        infrastructureSubnetId = azurerm_subnet.infrastructure.id
+        runtimeSubnetId        = module.network.runtime_subnet_id
+        infrastructureSubnetId = module.network.infrastructure_subnet_id
       }
     }
   })
+
+  depends_on = [
+    module.network
+  ]
 
 }
 
