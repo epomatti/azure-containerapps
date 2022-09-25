@@ -67,8 +67,16 @@ resource "azurerm_log_analytics_workspace" "default" {
   sku                 = "PerGB2018"
 }
 
-resource "azurerm_application_insights" "default" {
-  name                = "appi-${local.project}"
+resource "azurerm_application_insights" "dapr" {
+  name                = "appi-${local.project}-dapr"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.default.id
+}
+
+resource "azurerm_application_insights" "apps" {
+  name                = "appi-${local.project}-apps"
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
   application_type    = "web"
@@ -85,7 +93,7 @@ resource "azapi_resource" "managed_environment" {
 
   body = jsonencode({
     properties = {
-      daprAIConnectionString = azurerm_application_insights.default.connection_string
+      daprAIConnectionString = azurerm_application_insights.dapr.connection_string
       appLogsConfiguration = {
         destination = "log-analytics"
         logAnalyticsConfiguration = {
@@ -131,7 +139,7 @@ module "containerapp_order" {
   container_envs = [
     { name = "DAPR_APP_PORT", value = "3000" },
     { name = "DAPR_HTTP_PORT", value = "3500" },
-    { name = "APPLICATIONINSIGHTS_CONNECTION_STRING", value = azurerm_application_insights.default.connection_string }
+    { name = "APPLICATIONINSIGHTS_CONNECTION_STRING", value = azurerm_application_insights.apps.connection_string }
   ]
 }
 
@@ -157,7 +165,7 @@ module "containerapp_delivery" {
   container_envs = [
     { name = "DAPR_APP_PORT", value = "3100" },
     { name = "DAPR_HTTP_PORT", value = "3500" },
-    { name = "APPLICATIONINSIGHTS_CONNECTION_STRING", value = azurerm_application_insights.default.connection_string }
+    { name = "APPLICATIONINSIGHTS_CONNECTION_STRING", value = azurerm_application_insights.apps.connection_string }
   ]
 }
 
