@@ -31,13 +31,13 @@ terraform apply -auto-approve
 Testing from external:
 
 ```sh
-curl "https://<containerapp-fqdn>/liveness"
+curl "https://<containerapp-orders-fqdn>/liveness"
 ```
 
 Or testing from within the container directly to the sidecar:
 
 ```sh
-curl -X POST -H "dapr-app-id: publisher" localhost:3500/v1.0/publish/messages-pub-sub/queue1
+curl -d '{"orderId":"ORD-00001"}' -H "Content-Type: application/json" -X POST "<containerapp-orders-fqdn>/api/orders"
 ```
 
 
@@ -75,28 +75,17 @@ dapr run \
 To test it, send a message to the queue:
 
 ```sh
-http://localhost:3000/api/enqueue
+curl -d '{"orderId":"ORD-00001"}' -H "Content-Type: application/json" -X POST "http://localhost:3000/api/orders"
 ```
 
+Publishing directly to the topic:
+
+```sh
 dapr publish --publish-app-id order --pubsub order-pub-sub --topic orders --data '{"orderId": "100"}'
-
-## Local Development & Docker
-
-You can run each of the services independently by cd-ing into each one and using basic Node commands:
-
-```sh
-npm install
-npm start
 ```
 
-For an integrated local development experience:
+## Docker commands
 
-```sh
-cd services
-
-docker-compose build
-docker-compose up
-```
 
 To publish container changes:
 
