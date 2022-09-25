@@ -11,7 +11,7 @@ export const start = async () => {
   app.get('/dapr/subscribe', (_req, res) => {
     res.json([
       {
-        pubsubname: "orders-pub-sub",
+        pubsubname: "order-pub-sub",
         topic: "orders",
         route: "api/deliveries",
         metadata: {

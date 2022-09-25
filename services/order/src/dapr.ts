@@ -4,7 +4,7 @@ import { config } from './config';
 const { DAPR_HTTP_PORT } = config;
 
 const daprHost = "127.0.0.1";
-const PUBSUB_NAME = "orders-pub-sub"
+const PUBSUB_NAME = "order-pub-sub"
 const TOPIC_NAME = "orders"
 
 export const publishOrder = async (orderId: string) => {

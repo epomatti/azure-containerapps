@@ -31,7 +31,7 @@ terraform apply -auto-approve
 Testing from external:
 
 ```sh
-curl "https://<containerapp-fqdn>/api/enqueue"
+curl "https://<containerapp-fqdn>/liveness"
 ```
 
 Or testing from within the container directly to the sidecar:
@@ -64,7 +64,7 @@ cd orders
 
 # Orders Dapr
 dapr run \
-  --app-id orders \
+  --app-id order \
   --app-port 3000 \
   --app-protocol http \
   --dapr-http-port 3500 \
@@ -103,19 +103,13 @@ To publish container changes:
 ```sh
 cd services
 
-docker build ./publisher -t epomatti/azure-containerapps-publisher
-docker build ./subscriber -t epomatti/azure-containerapps-subscriber
+docker build ./order -t epomatti/azure-containerapps-order
+docker build ./delivery -t epomatti/azure-containerapps-delivery
 
 docker login --username=<username>
 
-docker push epomatti/azure-containerapps-publisher
-docker push epomatti/azure-containerapps-subscriber
-```
-
-Testing in isolation:
-
-```sh
-docker container run --name containerapps-subscriber -p 3100:3100 -d --rm epomatti/azure-containerapps-subscriber
+docker push epomatti/azure-containerapps-order
+docker push epomatti/azure-containerapps-delivery
 ```
 
 ## Clean-up
