@@ -58,7 +58,7 @@ resource "azurerm_servicebus_topic" "default" {
   enable_partitioning = true
 }
 
-### Log Analytics Workspace ###
+### Azure Monitor ###
 
 resource "azurerm_log_analytics_workspace" "default" {
   name                = "log-${local.project}"
