@@ -28,13 +28,13 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Testing from external:
+Testing liveness from external:
 
 ```sh
 curl "https://<containerapp-orders-fqdn>/liveness"
 ```
 
-Or testing from within the container directly to the sidecar:
+Testing the endpoint:
 
 ```sh
 curl -d '{"orderId":"ORD-00001"}' -H "Content-Type: application/json" -X POST "<containerapp-orders-fqdn>/api/orders"
@@ -43,13 +43,31 @@ curl -d '{"orderId":"ORD-00001"}' -H "Content-Type: application/json" -X POST "<
 
 ## Self-Hosted Dapr
 
-Create 
+Create the application insights resource for local testing:
 
 ```sh
 az group create -n "rg-containerapps-dev" -l "eastus"
 az monitor log-analytics workspace create -g "rg-containerapps-dev" -n "log-containerapps-dev" -l "eastus"
 az monitor app-insights component create --app "appi-containerapps-dev" -g "rg-containerapps-dev" --workspace "log-containerapps-dev" -l "eastus"
 az monitor app-insights component show --app "appi-containerapps-dev" -g "rg-containerapps-dev" --query "connectionString" -o tsv
+```
+
+Create a `.env` file for each of the two node apps.
+
+Order:
+
+```sh
+DAPR_APP_PORT="3000"
+DAPR_HTTP_PORT="3500"
+APPLICATIONINSIGHTS_CONNECTION_STRING="..."
+```
+
+Delivery:
+
+```sh
+DAPR_APP_PORT="3100"
+DAPR_HTTP_PORT="3501"
+APPLICATIONINSIGHTS_CONNECTION_STRING="..."
 ```
 
 Start the services:
