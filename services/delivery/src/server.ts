@@ -1,9 +1,9 @@
 import express, { Response, Request } from 'express';
 import cors from 'cors';
 import { config } from './config'
-
+import bodyParser from 'body-parser';
 const app = express();
-app.use(express.json());
+app.use(bodyParser.json({ type: 'application/*+json' }));
 app.use(cors())
 
 export const start = async () => {
@@ -18,7 +18,7 @@ export const start = async () => {
     ]);
   });
 
-  app.post('/api/deliveries', async (req: Request<{}, {}, { orderId: string }>, res: Response) => {
+  app.post('/api/deliveries', async (req: Request, res: Response) => {
     const rawBody = JSON.stringify(req.body);
     console.log(`Data received: ${rawBody}`)
     res.status(200).send({ status: "SUCCESS" });
