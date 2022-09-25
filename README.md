@@ -49,28 +49,27 @@ Start the services:
 # Start RabbitMQ
 docker run -d -p 5672:5672 --name dtc-rabbitmq rabbitmq
 
-# Subscriber web server
-cd subscriber
-npm start
+cd delivery
 
-# Subscriber Dapr
+# Delivery
 dapr run \
+  --app-id delivery \
   --app-port 3100 \
-  --app-id subscriber \
   --app-protocol http \
   --dapr-http-port 3501 \
-  --components-path ./components
+  --components-path ../components \
+  npm run dev
 
-# Publisher Dapr
+cd orders
+
+# Orders Dapr
 dapr run \
   --app-id orders \
+  --app-port 3000 \
   --app-protocol http \
   --dapr-http-port 3500 \
-  --components-path ./components
-
-# Publisher Web Server
-cd publisher
-npm start
+  --components-path ../components \
+  npm run dev
 ```
 
 To test it, send a message to the queue:
@@ -78,6 +77,8 @@ To test it, send a message to the queue:
 ```sh
 http://localhost:3000/api/enqueue
 ```
+
+dapr publish --publish-app-id delivery --pubsub orders-pub-sub --topic orders --data '{"orderId": "100"}'
 
 ## Local Development & Docker
 

@@ -9,7 +9,7 @@ const TOPIC_NAME = "orders"
 
 export const publishOrder = async (orderId: string) => {
   const client = new DaprClient(daprHost, DAPR_HTTP_PORT, CommunicationProtocolEnum.HTTP);
-  console.log("Published data:" + orderId)
+  console.log(`Published order data: [${orderId}]`)
   const data = {
     orderId: orderId
   }
