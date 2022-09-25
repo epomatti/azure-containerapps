@@ -1,6 +1,5 @@
 import express, { Response, Request } from 'express';
 import cors from 'cors';
-import { config } from './config'
 import bodyParser from 'body-parser';
 const app = express();
 app.use(bodyParser.json({ type: 'application/*+json' }));
@@ -33,7 +32,7 @@ export const start = async () => {
     res.sendStatus(200);
   });
 
-  const port = config.DAPR_APP_PORT;
+  const port = process.env.DAPR_APP_PORT;
   app.listen(port, () => {
     console.log(`Server started on port ${port}`)
   })

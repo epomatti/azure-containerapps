@@ -1,7 +1,6 @@
 import { DaprClient, HttpMethod, CommunicationProtocolEnum } from '@dapr/dapr';
-import { config } from './config';
 
-const { DAPR_HTTP_PORT } = config;
+const DAPR_HTTP_PORT = process.env.DAPR_APP_PORT;
 
 const daprHost = "127.0.0.1";
 const PUBSUB_NAME = "order-pub-sub"
