@@ -14,17 +14,13 @@ export const start = async () => {
         pubsubname: "order-pub-sub",
         topic: "orders",
         route: "api/deliveries",
-        metadata: {
-          rawPayload: "true",
-        }
       }
     ]);
   });
 
   app.post('/api/deliveries', async (req: Request<{}, {}, { orderId: string }>, res: Response) => {
-    console.log(req.body)
-    const { orderId } = req.body;
-    console.log(`Order [${orderId}] received for delivery!`);
+    const rawBody = JSON.stringify(req.body);
+    console.log(`Data received: ${rawBody}`)
     res.status(200).send({ status: "SUCCESS" });
   });
 

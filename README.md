@@ -78,7 +78,7 @@ To test it, send a message to the queue:
 http://localhost:3000/api/enqueue
 ```
 
-dapr publish --publish-app-id delivery --pubsub orders-pub-sub --topic orders --data '{"orderId": "100"}'
+dapr publish --publish-app-id order --pubsub order-pub-sub --topic orders --data '{"orderId": "100"}'
 
 ## Local Development & Docker
 
