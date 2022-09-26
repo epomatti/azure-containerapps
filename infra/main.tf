@@ -108,11 +108,6 @@ resource "azapi_resource" "managed_environment" {
       }
     }
   })
-
-  depends_on = [
-    module.network
-  ]
-
 }
 
 ### Application Apps - Services ###
