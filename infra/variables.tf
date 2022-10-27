@@ -1,3 +1,4 @@
 variable "location" {
-  type = string
+  type    = string
+  default = "eastus2"
 }

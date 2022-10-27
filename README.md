@@ -22,11 +22,11 @@ Simply run the following to start the environment:
 ```sh
 cd infra
 
-touch .auto.tfvars
-
 terraform init
 terraform apply -auto-approve
 ```
+
+If you prefer, customize the inputs by creating a `.auto.tfvars`.
 
 Testing liveness from external:
 
